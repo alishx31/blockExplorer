@@ -1,5 +1,8 @@
 import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import BlockPage from './block';
+import TransactionPage from './transaction';
 
 import './App.css';
 
@@ -20,17 +23,32 @@ const settings = {
 const alchemy = new Alchemy(settings);
 
 function App() {
-  const [blockNumber, setBlockNumber] = useState();
+  const [blockNumber, setBlockNumber] = useState("loading . . .");
 
   useEffect(() => {
+    // console.log('here', 123);
     async function getBlockNumber() {
+      const a = await alchemy.core.getBlockNumber();
+      console.log(a)
       setBlockNumber(await alchemy.core.getBlockNumber());
     }
 
     getBlockNumber();
   });
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  return (
+    <Router>
+      <div className="App"> Block Number:
+        <Link to="/block"> {blockNumber} </Link>
+
+
+        <hr />
+        <Route path="/block" component={BlockPage} />
+        <Route path="/transaction/:tHash" component={TransactionPage} />
+      </div>
+    </Router>
+  );
+
 }
 
 export default App;
